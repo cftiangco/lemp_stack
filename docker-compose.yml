@@ -1,12 +1,16 @@
-version: "3.9"
+version: "3"
+
 services:
    nginx:
      build: ./nginx/
      ports:
        - 8080:80
-  
      volumes:
          - ./php_code/:/var/www/html/
+     networks:
+       - lempnetwork
+     depends_on:
+       - mysql
 
    php:
      build: ./php/
@@ -14,13 +18,24 @@ services:
        - 9000
      volumes:
         - ./php_code/:/var/www/html/
+     networks:
+       - lempnetwork
+     depends_on:
+       - mysql
 
    mysql:
-     image: mysql:latest
+     image: mysql:5.7
      container_name: mysql
      environment:
        - MYSQL_ROOT_PASSWORD=root
+       - MYSQL_DATABASE=lemp
      ports:
        - 3306:3306
      volumes:
        - ./mysql_data:/var/lib/mysql
+     networks:
+       - lempnetwork
+
+networks:
+  lempnetwork:
+    external: true
